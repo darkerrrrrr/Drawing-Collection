@@ -28,20 +28,12 @@ class Collection(commands.Cog):
             vault_msg_ids.append(vault_msg.id)
 
         if vault_msg_ids:
-            # 保存完了の合図としてリアクションを追加
-            await message.add_reaction("✅")
-            print(f"Archived drawing from {message.author.display_name}")
-
-    @commands.Cog.listener()
-    async def on_raw_message_delete(self, payload):
-        guild = self.bot.get_guild(payload.guild_id)
-        if not guild: return
-        vault_ch = discord.utils.get(guild.text_channels, name="保管庫")
-        if not vault_ch: return
-
-        async for msg in vault_ch.history(limit=500):
-            if msg.embeds and f"OriginalMsgID: {payload.message_id}" in msg.embeds[0].footer.text:
-                await msg.delete()
+            # 元のメッセージを削除して「保管庫に移動した」状態にする
+            try:
+                await message.delete()
+            except discord.Forbidden:
+                print(f"Error: メッセージを削除する権限がありません（{message.channel.name}）")
+            print(f"Moved drawing from {message.author.display_name} to Vault")
 
 async def setup(bot):
     await bot.add_cog(Collection(bot))

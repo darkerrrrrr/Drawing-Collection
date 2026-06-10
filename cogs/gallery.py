@@ -53,6 +53,9 @@ class Gallery(commands.Cog):
     async def show(self, interaction: discord.Interaction):
         if not await self.channel_check(interaction, "マイギャラリー"): return
         vault_ch = discord.utils.get(interaction.guild.text_channels, name="保管庫")
+        if not vault_ch:
+            return await interaction.response.send_message("❌ 保管庫チャンネルが見つかりません。先に `/setup` を実行してください。", ephemeral=True)
+
         my_works = [m async for m in vault_ch.history(limit=500) if m.embeds and f"AuthorID: {interaction.user.id}" in m.embeds[0].footer.text]
         if not my_works: return await interaction.response.send_message("作品がありません。")
         
@@ -63,6 +66,9 @@ class Gallery(commands.Cog):
     async def gallery(self, interaction: discord.Interaction):
         if not await self.channel_check(interaction, "マイギャラリー"): return
         vault_ch = discord.utils.get(interaction.guild.text_channels, name="保管庫")
+        if not vault_ch:
+            return await interaction.response.send_message("❌ 保管庫チャンネルが見つかりません。先に `/setup` を実行してください。", ephemeral=True)
+
         my_works = [m async for m in vault_ch.history(limit=500) if m.embeds and f"AuthorID: {interaction.user.id}" in m.embeds[0].footer.text]
         if not my_works: return await interaction.response.send_message("作品がありません。")
 
@@ -75,6 +81,9 @@ class Gallery(commands.Cog):
         
         await interaction.response.defer() # 処理に時間がかかることを伝えるアクション
         vault_ch = discord.utils.get(interaction.guild.text_channels, name="保管庫")
+        if not vault_ch:
+            return await interaction.followup.send("❌ 保管庫チャンネルが見つかりません。先に `/setup` を実行してください。")
+
         results = []
         async for m in vault_ch.history(limit=500):
             if not m.embeds: continue

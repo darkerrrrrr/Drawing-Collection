@@ -17,6 +17,12 @@ class Manager(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         guild = interaction.guild
 
+        # カテゴリーの取得または作成
+        category_name = "お絵描きコレクション"
+        category = discord.utils.get(guild.categories, name=category_name)
+        if not category:
+            category = await guild.create_category(category_name)
+
         for key, name in self.required_channels.items():
             existing = discord.utils.get(guild.text_channels, name=name)
             if not existing:
@@ -26,7 +32,11 @@ class Manager(commands.Cog):
                         guild.default_role: discord.PermissionOverwrite(read_messages=False),
                         guild.me: discord.PermissionOverwrite(read_messages=True)
                     }
-                existing = await guild.create_text_channel(name, overwrites=overwrites)
+                await guild.create_text_channel(name, overwrites=overwrites, category=category)
+            else:
+                # 既存のチャンネルがカテゴリーに入っていない場合は移動させる
+                if existing.category != category:
+                    await existing.edit(category=category)
         
         await interaction.followup.send("✅ チャンネルの同期が完了しました。")
 
