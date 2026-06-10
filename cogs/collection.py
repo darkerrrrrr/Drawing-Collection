@@ -19,12 +19,16 @@ class Collection(commands.Cog):
             if not attachment.content_type or not attachment.content_type.startswith("image/"):
                 continue
                 
+            # 画像をファイルとして取得（再アップロード用）
+            file = await attachment.to_file()
             embed = discord.Embed(description=message.content or "No caption", color=discord.Color.blue())
             embed.set_author(name=message.author.display_name, icon_url=message.author.display_avatar.url)
-            embed.set_image(url=attachment.url)
+            # アップロードするファイルをEmbedの画像として指定
+            embed.set_image(url=f"attachment://{attachment.filename}")
             embed.set_footer(text=f"AuthorID: {message.author.id} | OriginalMsgID: {message.id}")
             
-            vault_msg = await vault_ch.send(embed=embed)
+            # ファイルとEmbedをセットで送信
+            vault_msg = await vault_ch.send(file=file, embed=embed)
             vault_msg_ids.append(vault_msg.id)
 
         if vault_msg_ids:

@@ -30,7 +30,12 @@ class Manager(commands.Cog):
                 if key == "vault":
                     overwrites = {
                         guild.default_role: discord.PermissionOverwrite(read_messages=False),
-                        guild.me: discord.PermissionOverwrite(read_messages=True)
+                        guild.me: discord.PermissionOverwrite(
+                            read_messages=True, 
+                            send_messages=True, 
+                            embed_links=True, 
+                            attach_files=True
+                        )
                     }
                 await guild.create_text_channel(name, overwrites=overwrites, category=category)
             else:
