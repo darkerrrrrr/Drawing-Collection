@@ -23,9 +23,10 @@ class DrawingBot(commands.Bot):
         print("Bot is ready and commands synced.")
 
     async def shutdown_timer(self):
-        # 6時間 (21600秒) 経過後にボットを終了させる
-        await asyncio.sleep(21600)
-        print("6 hours passed. Shutting down...")
+        # GitHub Actionsの制限(6時間)に余裕を持って、5時間50分(21000秒)で終了させる
+        # これによりワークフローが「タイムアウト失敗」にならず正常終了します
+        await asyncio.sleep(21000)
+        print("Shutdown timer reached. Closing bot...")
         await self.close()
 
 bot = DrawingBot()

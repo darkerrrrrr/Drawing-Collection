@@ -40,6 +40,8 @@ class Collection(commands.Cog):
                 await message.delete()
             except discord.Forbidden:
                 print(f"Error: メッセージを削除する権限がありません（{message.channel.name}）")
+            except discord.NotFound:
+                print(f"Notice: メッセージが既に削除されています")
             print(f"Moved drawing from {message.author.display_name} to Vault")
 
 async def setup(bot):
