@@ -9,7 +9,7 @@ class Collection(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.bot: return
-        if message.channel.name != "イラスト投稿所" or not message.attachments:
+        if not message.attachments or message.channel.name != "イラスト投稿所":
             return
 
         vault_ch = discord.utils.get(message.guild.text_channels, name="保管庫")
