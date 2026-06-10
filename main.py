@@ -3,7 +3,6 @@ import asyncio
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-from pathlib import Path
 
 load_dotenv()
 
@@ -32,4 +31,10 @@ class DrawingBot(commands.Bot):
 bot = DrawingBot()
 
 if __name__ == "__main__":
-    bot.run(os.getenv("DISCORD_TOKEN"))
+    token = os.getenv("DISCORD_TOKEN")
+    if not token:
+        print("Error: DISCORD_TOKEN environment variable is not set.")
+        print("Please ensure you have added it to GitHub Secrets or your .env file.")
+        exit(1)
+    
+    bot.run(token)

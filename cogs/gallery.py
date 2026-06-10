@@ -72,6 +72,8 @@ class Gallery(commands.Cog):
     @app_commands.command(name="search", description="全体から検索")
     async def search(self, interaction: discord.Interaction, user: discord.Member = None, keyword: str = None):
         if not await self.channel_check(interaction, "全体ギャラリー"): return
+        
+        await interaction.response.defer() # 処理に時間がかかることを伝えるアクション
         vault_ch = discord.utils.get(interaction.guild.text_channels, name="保管庫")
         results = []
         async for m in vault_ch.history(limit=500):
@@ -81,9 +83,9 @@ class Gallery(commands.Cog):
             if keyword and keyword not in (embed.description or ""): continue
             results.append(m)
 
-        if not results: return await interaction.response.send_message("見つかりませんでした。")
+        if not results: return await interaction.followup.send("見つかりませんでした。")
         view = GalleryView(results, interaction.user.id)
-        await interaction.response.send_message(embed=view.make_embed(), view=view)
+        await interaction.followup.send(embed=view.make_embed(), view=view)
 
 async def setup(bot):
     await bot.add_cog(Gallery(bot))

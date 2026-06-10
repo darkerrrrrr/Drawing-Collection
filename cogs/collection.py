@@ -19,7 +19,6 @@ class Collection(commands.Cog):
             if not attachment.content_type or not attachment.content_type.startswith("image/"):
                 continue
                 
-            # 保管庫へ転送
             embed = discord.Embed(description=message.content or "No caption", color=discord.Color.blue())
             embed.set_author(name=message.author.display_name, icon_url=message.author.display_avatar.url)
             embed.set_image(url=attachment.url)
@@ -28,8 +27,10 @@ class Collection(commands.Cog):
             vault_msg = await vault_ch.send(embed=embed)
             vault_msg_ids.append(vault_msg.id)
 
-        if not vault_msg_ids: return
-        print(f"Archived drawing from {message.author.display_name}")
+        if vault_msg_ids:
+            # 保存完了の合図としてリアクションを追加
+            await message.add_reaction("✅")
+            print(f"Archived drawing from {message.author.display_name}")
 
     @commands.Cog.listener()
     async def on_raw_message_delete(self, payload):
