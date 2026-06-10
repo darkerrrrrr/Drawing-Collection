@@ -39,6 +39,25 @@ class GalleryView(ui.View):
         await interaction.response.edit_message(content="✅ この作品をコレクションから削除しました。", embed=None, view=None)
         self.stop()
 
+    @ui.button(label="閉じる", style=discord.ButtonStyle.secondary)
+    async def close_gallery(self, interaction: discord.Interaction, button: ui.Button):
+        await interaction.response.edit_message(content="ギャラリーを閉じました。", embed=None, view=None)
+        self.stop()
+
+class ShowView(ui.View):
+    def __init__(self, messages: list[discord.Message], user_id: int):
+        super().__init__(timeout=60)
+        self.data_list = messages
+        self.user_id = user_id
+
+    def make_embed(self):
+        return random.choice(self.data_list).embeds[0]
+
+    @ui.button(label="もう一度引く 🎲", style=discord.ButtonStyle.primary)
+    async def reroll(self, interaction: discord.Interaction, button: ui.Button):
+        await interaction.response.edit_message(embed=self.make_embed(), view=self)
+
+
 class Gallery(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -60,7 +79,7 @@ class Gallery(commands.Cog):
         if not my_works: return await interaction.response.send_message("作品がありません。")
         
         entry = random.choice(my_works)
-        await interaction.response.send_message(embed=entry.embeds[0])
+        await interaction.response.send_message(embed=entry.embeds[0], view=ShowView(my_works, interaction.user.id))
 
     @app_commands.command(name="gallery", description="自分のギャラリーを表示")
     async def gallery(self, interaction: discord.Interaction):
