@@ -41,6 +41,11 @@ class GalleryView(ui.View):
         
         await interaction.response.edit_message(content="✅ この作品をコレクションから削除しました。", embed=None, view=None)
         self.stop()
+        await asyncio.sleep(3)
+        try:
+            await interaction.delete_original_response()
+        except:
+            pass
 
     @ui.button(label="閉じる", style=discord.ButtonStyle.secondary)
     async def close_gallery(self, interaction: discord.Interaction, button: ui.Button):
