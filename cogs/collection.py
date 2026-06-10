@@ -1,4 +1,5 @@
 import discord
+import asyncio
 from discord.ext import commands
 
 class Collection(commands.Cog):
@@ -32,6 +33,8 @@ class Collection(commands.Cog):
             vault_msg_ids.append(vault_msg.id)
 
         if vault_msg_ids:
+            # 3秒間だけメッセージを残して、ユーザーが送信を確認できるようにする
+            await asyncio.sleep(3)
             # 元のメッセージを削除して「保管庫に移動した」状態にする
             try:
                 await message.delete()
